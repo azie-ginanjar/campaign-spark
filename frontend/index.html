@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampaignSpark - Mockup</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5', // Indigo-600
+                        primaryHover: '#4338ca', // Indigo-700
+                        surface: '#ffffff',
+                        background: '#f9fafb', // Gray-50
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="text-gray-900 antialiased min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-bold text-xl tracking-tight">CampaignSpark</span>
+                </div>
+                
+                <!-- Status & Auth -->
+                <div class="flex items-center space-x-4">
+                    <span id="generationsRemainingText" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <!-- Populated by app.js on load -->
+                    </span>
+                    <button id="loginBtn" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+                        Already Paid? Log in
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area (Single Column) -->
+    <main class="flex-grow w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col space-y-8">
+        
+        <!-- Hero Section -->
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl font-bold text-gray-900">Spark Your Marketing Copy</h1>
+            <p class="text-gray-500">Paste your messy notes below and get high-converting one-liners instantly.</p>
+        </div>
+
+        <!-- Input Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+            <div>
+                <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Product Idea or Notes</label>
+                <textarea 
+                    id="notes" 
+                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-4 border bg-gray-50 transition-colors"
+                    placeholder="E.g., We built a new project management tool that uses AI to automatically categorize tasks and estimate time. It integrates with Slack. Target audience is remote teams."
+                ></textarea>
+            </div>
+            
+            <div class="flex justify-end">
+                <button id="generateBtn" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primaryHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Generate Angles
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State: Multi-stage Agent Tracker -->
+        <div id="loadingState" class="hidden space-y-5">
+
+            <!-- Progress Bar -->
+            <div class="progress-bar-track">
+                <div id="progressBarFill" class="progress-bar-fill" style="width: 0%"></div>
+            </div>
+
+            <!-- Agent Stages -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-100">
+                <!-- Stage 1 -->
+                <div id="stage-1" class="stage-item">
+                    <div class="stage-icon" id="stage-1-icon">🔍</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="stage-label">Strategist</div>
+                        <div class="stage-desc">Analyzing your product brief...</div>
+                    </div>
+                    <div id="stage-1-spinner" class="hidden spinner-ring"></div>
+                    <svg id="stage-1-check" class="hidden w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <!-- Stage 2 -->
+                <div id="stage-2" class="stage-item">
+                    <div class="stage-icon" id="stage-2-icon">✍️</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="stage-label">Copywriter</div>
+                        <div class="stage-desc">Crafting 3 high-converting angles...</div>
+                    </div>
+                    <div id="stage-2-spinner" class="hidden spinner-ring"></div>
+                    <svg id="stage-2-check" class="hidden w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <!-- Stage 3 -->
+                <div id="stage-3" class="stage-item">
+                    <div class="stage-icon" id="stage-3-icon">✅</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="stage-label">Editor</div>
+                        <div class="stage-desc">Reviewing accuracy &amp; formatting...</div>
+                    </div>
+                    <div id="stage-3-spinner" class="hidden spinner-ring"></div>
+                    <svg id="stage-3-check" class="hidden w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+            </div>
+
+            <!-- Estimated Time hint -->
+            <p class="text-center text-xs text-gray-400">Usually takes 15–30 seconds · Powered by Gemini AI</p>
+
+            <!-- Skeleton Ghost Cards -->
+            <div class="space-y-4" id="skeletonCards">
+                <!-- Skeleton 1 -->
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-3 bg-gray-50 border-b border-gray-100">
+                        <div class="skeleton h-4 w-28"></div>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <div class="skeleton h-4 w-full"></div>
+                        <div class="skeleton h-4 w-4/5"></div>
+                    </div>
+                    <div class="px-6 py-3 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                        <div class="skeleton h-4 w-20"></div>
+                        <div class="skeleton h-4 w-20"></div>
+                        <div class="skeleton h-4 w-12"></div>
+                    </div>
+                </div>
+                <!-- Skeleton 2 -->
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-3 bg-gray-50 border-b border-gray-100">
+                        <div class="skeleton h-4 w-32"></div>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <div class="skeleton h-4 w-full"></div>
+                        <div class="skeleton h-4 w-3/4"></div>
+                    </div>
+                    <div class="px-6 py-3 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                        <div class="skeleton h-4 w-20"></div>
+                        <div class="skeleton h-4 w-20"></div>
+                        <div class="skeleton h-4 w-12"></div>
+                    </div>
+                </div>
+                <!-- Skeleton 3 -->
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-3 bg-gray-50 border-b border-gray-100">
+                        <div class="skeleton h-4 w-24"></div>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <div class="skeleton h-4 w-full"></div>
+                        <div class="skeleton h-4 w-5/6"></div>
+                    </div>
+                    <div class="px-6 py-3 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                        <div class="skeleton h-4 w-20"></div>
+                        <div class="skeleton h-4 w-20"></div>
+                        <div class="skeleton h-4 w-12"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inline Error State (hidden by default) -->
+            <div id="loaderError" class="hidden loader-error">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                <span id="loaderErrorMsg">Something went wrong. Please try again.</span>
+                <button id="loaderRetryBtn" class="mt-1 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">Try Again</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden space-y-6">
+            <h2 class="text-xl font-semibold text-gray-900 border-b pb-2">Your Marketing Angles</h2>
+            
+            <!-- Dynamic Cards Container -->
+            <div id="cardsContainer" class="space-y-6"></div>
+
+        </div>
+    </main>
+
+    <!-- Paywall Modal -->
+    <div id="paywallModal" class="hidden fixed inset-0 z-50 bg-gray-900 bg-opacity-75 items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center space-y-6">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100">
+                <svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </div>
+            
+            <div>
+                <h3 class="text-2xl font-bold text-gray-900">Unlock Unlimited Angles</h3>
+                <p class="text-gray-500 mt-2">You've reached your 3 free generations. Upgrade to a lifetime pass to get unlimited marketing hooks forever.</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                <span class="text-3xl font-extrabold text-gray-900">$29</span>
+                <span class="text-gray-500 font-medium">/ lifetime access</span>
+            </div>
+
+            <div class="space-y-3">
+                <button id="checkoutBtn" class="w-full flex justify-center items-center px-4 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primaryHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                    Get Lifetime Access
+                </button>
+                <button id="restoreBtn" class="w-full flex justify-center items-center px-4 py-3 border border-gray-300 text-base font-medium rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                    Restore Purchase
+                </button>
+            </div>
+            <button id="closePaywallBtn" class="mt-4 text-sm text-gray-500 hover:text-gray-700">Close</button>
+        </div>
+    </div>
+
+    <!-- Magic Link Modal -->
+    <div id="magicLinkModal" class="hidden fixed inset-0 z-50 bg-gray-900 bg-opacity-75 items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center space-y-6">
+            <h3 class="text-2xl font-bold text-gray-900">Log in with Email</h3>
+            <p class="text-gray-500 mt-2">Enter the email you used to purchase lifetime access.</p>
+            <input type="email" id="loginEmail" placeholder="your@email.com" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-3 border bg-gray-50 transition-colors">
+            <div id="magicLinkMessage" class="hidden text-sm font-medium"></div>
+            <button id="sendMagicLinkBtn" class="w-full flex justify-center items-center px-4 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primaryHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50">
+                Send Magic Link
+            </button>
+            <button id="closeMagicLinkBtn" class="text-sm text-gray-500 hover:text-gray-700 mt-2">Cancel</button>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+redis
+crewai
+python-dotenv
+pytest
+fakeredis
+PyJWT
+httpx
+email-validator
+google-generativeai
+langchain-google-genai
